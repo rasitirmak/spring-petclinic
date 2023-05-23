@@ -1,3 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-service
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30000
+  selector:
+    app: jenkins
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,16 +27,13 @@ spec:
         app: jenkins
     spec:
       containers:
-      - name: jenkins
-        image: jenkins/jenkins
-        ports:
-        - containerPort: 8081
-      #   volumeMounts:
-      #   - name: jenkins-home
-      #     mountPath: /var/jenkins_home
-      # volumes:
-      # - name: jenkins-home
-      #   persistentVolumeClaim:
-      #     claimName: jenkins-pvc
-
----
+        - name: jenkins
+          image: jenkins/jenkins:jdk17-preview
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-home
+          emptyDir: {}

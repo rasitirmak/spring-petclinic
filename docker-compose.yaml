@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+   mysqldb:
+     image: mysql
+     environment:
+      MYSQL_DATABASE: spring
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: ras1234
+      MYSQL_ROOT_PASSWORD: ras1234
+     networks:
+      - webnet
+
+   app:
+     depends_on:
+       - mysqldb
+     image: rasitirmak/spring
+     ports:
+       - "80:80"
+     restart: always
+     networks:
+       - webnet
+     environment:
+       DB_SERVER: mysqldb
+       DB_USERNAME: admin
+       DB_PASS: ras1234
+       DB_NAME: spring
+networks:
+  webnet:
+    driver: bridge
